@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pharma2Tech Systems | LMS Portal</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        :root { --primary: #004a80; --secondary: #003359; --bg: #f4f7f6; --text: #333; --white: #ffffff; --success: #28a745; --danger: #f44336; }
+        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { margin: 0; background: var(--secondary); transition: 0.3s; color: var(--text); overflow-x: hidden; }
+        
+        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
+        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+
+        .login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
+        .login-container { background: var(--white); display: flex; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 900px; width: 100%; min-height: 500px; }
+        .login-visual { background: #f0f7ff; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
+        .login-visual img { max-width: 100%; height: auto; border-radius: 10px; }
+        
+        .login-form { flex: 1; padding: 50px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
+        .firm-name { color: var(--primary); font-weight: 700; font-size: 1.8rem; margin-bottom: 10px; line-height: 1.2; }
+        .login-form h2 { color: #555; margin: 0; font-size: 1.1rem; font-weight: 500; }
+        
+        input { width: 100%; padding: 14px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 10px; background: #fafafa; font-size: 0.95rem; }
+        input:focus { border-color: var(--primary); outline: none; background: #fff; }
+        .btn-login { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; cursor: pointer; border-radius: 10px; font-weight: 600; font-size: 1rem; margin-top: 15px; transition: 0.3s; }
+        .btn-login:hover { background: var(--secondary); transform: translateY(-2px); }
+
+        #dashboard { display: none; background: var(--bg); min-height: 100vh; flex-direction: column; }
+        header { background: var(--primary); color: white; padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 4px 12px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 1000; }
+        
+        .user-info { display: flex; align-items: center; gap: 15px; }
+        .profile-box { display: flex; align-items: center; gap: 8px; background: rgba(255,255,255,0.15); padding: 6px 15px; border-radius: 50px; }
+        .logout-btn { background: var(--danger); color: white; padding: 7px 15px; border-radius: 8px; text-decoration: none; font-size: 0.85rem; font-weight: 600; border: none; cursor: pointer; }
+
+        .nav-tabs { background: white; display: flex; justify-content: center; border-bottom: 1px solid #ddd; position: sticky; top: 60px; z-index: 999; }
+        .nav-item { padding: 15px 25px; cursor: pointer; font-weight: 500; color: #666; border-bottom: 3px solid transparent; }
+        .nav-item.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+
+        .main-content { max-width: 1100px; margin: 30px auto; width: 95%; flex: 1; }
+        .section { display: none; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
+        .section.active { display: block; animation: fadeIn 0.4s ease; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { text-align: left; background: #f8f9fa; color: var(--primary); padding: 15px; border-bottom: 2px solid #eee; }
+        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
+        
+        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; text-transform: uppercase; }
+        .UPCOMING { background: #fff3cd; color: #856404; }
+        .PASSED { background: #d4edda; color: #155724; }
+        .FAILED { background: #f8d7da; color: #721c24; }
+        
+        .action-link { background: var(--primary); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; font-weight: 600; }
+        footer { background: var(--secondary); color: rgba(255,255,255,0.6); text-align: center; padding: 20px; font-size: 0.85rem; margin-top: auto; }
+
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner"></div><p style="margin-top:15px; color:var(--primary); font-weight:600;">Processing...</p></div>
+
+<div id="loginPage" class="login-screen">
+    <div class="login-container">
+        <div class="login-visual">
+            <img src="https://img.freepik.com/free-vector/digital-learning-abstract-concept-vector-illustration_335657-2410.jpg" alt="Visual">
+        </div>
+        <div class="login-form">
+            <div class="firm-name">Pharma2Tech Systems Pvt Ltd</div>
+            <h2>LMS Student Login</h2>
+            <input type="email" id="email" placeholder="Email Address">
+            <input type="password" id="pass" placeholder="Password">
+            <button class="btn-login" onclick="handleLogin()">Login to Dashboard</button>
+        </div>
+    </div>
+</div>
+
+<div id="dashboard">
+    <header>
+        <div class="logo-text" style="font-weight: 600;">Pharma2Tech LMS Platform</div>
+        <div class="user-info">
+            <div class="profile-box">
+                <i class="fas fa-user-circle"></i>
+                <span id="studentNameDisplay">Hello, Student</span>
+            </div>
+            <button class="logout-btn" onclick="logout()">Logout</button>
+        </div>
+    </header>
+
+    <div class="nav-tabs">
+        <div class="nav-item active" onclick="showTab('attendance', this)">Attendance</div>
+        <div class="nav-item" onclick="showTab('exams', this)">Exams</div>
+        <div class="nav-item" onclick="showTab('assign', this)">Assignments</div>
+        <div class="nav-item" onclick="showTab('cert', this)">Certification</div>
+    </div>
+
+    <div class="main-content">
+        <div id="attendance" class="section active">
+            <h3 style="color: var(--primary); margin-top: 0;">Daily Attendance & Video Lectures</h3>
+            <table>
+                <thead><tr><th>Date</th><th>Status</th><th>Topic</th><th>Resource</th></tr></thead>
+                <tbody id="attBody"></tbody>
+            </table>
+        </div>
+
+        <div id="exams" class="section">
+            <h3 style="color: var(--primary); margin-top: 0;">Examination Dashboard</h3>
+            <table>
+                <thead><tr><th>Exam Title</th><th>Score</th><th>Date</th><th>Status</th><th>Action</th></tr></thead>
+                <tbody id="examBody"></tbody>
+            </table>
+        </div>
+
+        <div id="assign" class="section">
+            <h3 style="color: var(--primary); margin-top: 0;">Course Assignments</h3>
+            <table>
+                <thead><tr><th>Title</th><th>Deadline</th><th>Status</th></tr></thead>
+                <tbody id="assignBody"></tbody>
+            </table>
+        </div>
+
+        <div id="cert" class="section" style="text-align:center; padding: 60px 20px;">
+            <h2 style="color: var(--primary);">Verified Course Certificate</h2>
+            <p style="color:#666;">Available after final assessment completion.</p>
+            <br>
+            <a href="https://pharma2techsolutions-jpg.github.io/Certification.Pharma2Tech/" target="_blank" class="btn-login" style="display:inline-block; width:auto; padding: 12px 40px; text-decoration:none;">Go to Certificate Portal</a>
+        </div>
+    </div>
+
+    <footer>&copy; 2026 <b>Pharma2Tech Systems Pvt Ltd.</b> All Rights Reserved.</footer>
+</div>
+
+<script>
+    const apiURL = "https://script.google.com/macros/s/AKfycby9tnwCHXFUG7QXLtvz-PknytYrSDG_VosF0InTweuKvRmp5nrzeXFZX6N0QE9rPLND/exec";
+    let userEmail = "";
+
+    async function handleLogin() {
+        const e = document.getElementById('email').value.trim();
+        const p = document.getElementById('pass').value.trim();
+        if(!e || !p) return alert("Please fill all fields.");
+
+        toggleLoader(true);
+        try {
+            const res = await fetch(`${apiURL}?action=login&email=${encodeURIComponent(e)}&pass=${encodeURIComponent(p)}`);
+            const d = await res.json();
+            if(d.status === "SUCCESS") {
+                userEmail = d.email;
+                document.getElementById('studentNameDisplay').innerText = "Hello, " + d.name;
+                document.getElementById('loginPage').style.display = "none";
+                document.getElementById('dashboard').style.display = "flex";
+                document.body.style.background = "#f4f7f6";
+                loadData();
+            } else { alert("Invalid Credentials!"); }
+        } catch(err) { alert("Server error."); }
+        toggleLoader(false);
+    }
+
+    async function loadData() {
+        const res = await fetch(`${apiURL}?action=getDashboardData&email=${userEmail}`);
+        const data = await res.json();
+
+        // Attendance Logic: Absent asel tarach Watch Video disel
+        document.getElementById('attBody').innerHTML = data.attendance.slice(1).map(r => {
+            const status = r[2]; 
+            const actionBtn = status === 'Absent' 
+                ? `<a href="${r[4]}" target="_blank" class="action-link">Watch Video</a>` 
+                : `<span style="color:#28a745; font-weight:600;"><i class="fas fa-check-circle"></i> Attended</span>`;
+            return `<tr><td>${r[1]}</td><td><b style="color: ${status === 'Absent' ? 'var(--danger)' : 'var(--success)'}">${status}</b></td><td>${r[3]}</td><td>${actionBtn}</td></tr>`;
+        }).join('');
+
+        // Exams
+        document.getElementById('examBody').innerHTML = data.exams.slice(1).map(r => {
+            const status = (r[6] || "").toUpperCase();
+            const score = status === "UPCOMING" ? "--" : `${r[3]}/${r[4]}`;
+            const action = status === "UPCOMING" ? `<a href="${r[7]}" target="_blank" class="action-link" style="background:var(--success)">Start Exam</a>` : `<span style="color:#999">Completed</span>`;
+            return `<tr><td>${r[2]}</td><td>${score}</td><td>${r[5]}</td><td><span class="status-pill ${status}">${status}</span></td><td>${action}</td></tr>`;
+        }).join('');
+
+        // Assignments
+        document.getElementById('assignBody').innerHTML = data.assignments.slice(1).map(r => `<tr><td>${r[1]}</td><td>${r[2]}</td><td><b>${r[3]}</b></td></tr>`).join('');
+    }
+
+    function showTab(id, el) {
+        document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+        document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+        document.getElementById(id).classList.add('active');
+        el.classList.add('active');
+    }
+
+    function logout() { if(confirm("Logout?")) location.reload(); }
+    function toggleLoader(show) { document.getElementById('loader').style.display = show ? "flex" : "none"; }
+</script>
+</body>
+</html>
