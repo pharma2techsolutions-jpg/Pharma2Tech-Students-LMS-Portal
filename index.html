@@ -94,6 +94,7 @@
     <div class="nav-tabs">
         <div class="nav-item active" onclick="showTab('attendance', this)">Attendance</div>
         <div class="nav-item" onclick="showTab('exams', this)">Exams</div>
+        <div class="nav-item" onclick="showTab('applyInterview', this)">Apply Interview</div>
         <div class="nav-item" onclick="showTab('interviews', this)">Interviews</div>
         <div class="nav-item" onclick="showTab('assign', this)">Assignments</div>
         <div class="nav-item" onclick="showTab('cert', this)">Certification</div>
@@ -101,6 +102,15 @@
     </div>
 
     <div class="main-content">
+        <div id="applyInterview" class="section">
+            <h3>Apply for Interview</h3>
+            <div style="background: #f9f9f9; padding: 25px; border-radius: 15px; border: 1px solid #e0e0e0; text-align: center;">
+                <h4 style="margin-top:0;">Ready to start your career?</h4>
+                <p style="color:#666; margin-bottom: 20px;">Click the button below to fill out your interview application form.</p>
+                <a href="https://pharma2techsolutions-jpg.github.io/interview-aplication-system/" target="_blank" class="btn-login" style="width: auto; padding: 12px 30px; display: inline-block;">Fill Interview Form</a>
+            </div>
+        </div>
+
         <div id="attendance" class="section active">
             <h3>Attendance & Resources</h3>
             <div class="table-wrap">
@@ -166,14 +176,12 @@
 </div>
 
 <script>
-    // ⚠️ REPLACE THIS URL WITH YOUR DEPLOYED WEB APP URL
     const apiURL = "https://script.google.com/macros/s/AKfycbzJS7GFfAhezm4yDH5oLW4CNCoAs6CwUEHc_1FmZd8mY2o3RWMD1MoEl0-RRQkVQO0i/exec"; 
     let userEmail = "";
 
-    // Global Date Formatter for stability
     function formatDate(val) {
         if (!val) return "--";
-        if (typeof val === 'string' && val.includes('/')) return val; // Already formatted
+        if (typeof val === 'string' && val.includes('/')) return val; 
         let d = new Date(val);
         return isNaN(d) ? val : d.toLocaleDateString('en-GB');
     }
