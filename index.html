@@ -3,264 +3,249 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pharma2Tech Systems | LMS Student Portal</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>LMS Portal - System Upgrade</title>
     <style>
-        :root { --primary: #004a80; --secondary: #003359; --bg: #f4f7f6; --text: #333; --white: #ffffff; --success: #28a745; --danger: #f44336; --warning: #ffc107; }
-        * { box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { margin: 0; background: var(--secondary); color: var(--text); overflow-x: hidden; transition: 0.3s; }
-        
-        #loader { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.9); z-index: 9999; flex-direction: column; justify-content: center; align-items: center; }
-        .spinner { width: 40px; height: 40px; border: 4px solid #f3f3f3; border-top: 4px solid var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
 
-        /* Login UI */
-        .login-screen { display: flex; justify-content: center; align-items: center; height: 100vh; padding: 20px; }
-        .login-container { background: var(--white); display: flex; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 50px rgba(0,0,0,0.3); max-width: 900px; width: 100%; min-height: 500px; }
-        .login-visual { background: #f0f7ff; flex: 1; display: flex; align-items: center; justify-content: center; padding: 40px; }
-        .login-visual img { max-width: 100%; height: auto; border-radius: 10px; }
-        .login-form { flex: 1; padding: 50px; text-align: center; display: flex; flex-direction: column; justify-content: center; }
-        
-        input, select, textarea { width: 100%; padding: 14px; margin: 10px 0; border: 1.5px solid #eee; border-radius: 10px; background: #fafafa; outline: none; }
-        .btn-login { background: var(--primary); color: white; border: none; width: 100%; padding: 15px; cursor: pointer; border-radius: 10px; font-weight: 600; margin-top: 15px; transition: 0.3s; text-decoration: none; display: inline-block; }
-        .btn-login:hover { background: var(--secondary); transform: translateY(-2px); }
+        :root {
+            --bg-dark: #0b0f19;
+            --card-bg: rgba(22, 30, 49, 0.75);
+            --primary-cyan: #06b6d4;
+            --accent-orange: #f97316; /* Professional warning/action color */
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+        }
 
-        /* Dashboard UI */
-        #dashboard { display: none; background: var(--bg); min-height: 100vh; flex-direction: column; }
-        header { background: var(--primary); color: white; padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        
-        .nav-tabs { background: white; display: flex; justify-content: flex-start; border-bottom: 1px solid #ddd; position: sticky; top: 60px; z-index: 999; overflow-x: auto; -webkit-overflow-scrolling: touch; }
-        .nav-item { padding: 15px 20px; cursor: pointer; font-weight: 500; color: #666; border-bottom: 3px solid transparent; white-space: nowrap; }
-        .nav-item.active { color: var(--primary); border-bottom-color: var(--primary); font-weight: 600; }
+        body {
+            background-color: var(--bg-dark);
+            background-image: 
+                radial-gradient(at 10% 10%, rgba(6, 182, 212, 0.1) 0px, transparent 50%),
+                radial-gradient(at 90% 90%, rgba(249, 115, 22, 0.08) 0px, transparent 50%);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+        }
 
-        .main-content { max-width: 1100px; margin: 30px auto; width: 95%; flex: 1; }
-        .section { display: none; background: white; padding: 30px; border-radius: 15px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); }
-        .section.active { display: block; animation: fadeIn 0.4s ease; }
+        /* Animated grid */
+        body::before {
+            content: "";
+            position: absolute;
+            width: 200%;
+            height: 200%;
+            top: -50%;
+            left: -50%;
+            background-image: 
+                linear-gradient(rgba(255,255,255,0.01) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.01) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: rotate(-10deg);
+            animation: gridMove 60s linear infinite;
+            z-index: 0;
+        }
 
-        /* Responsive Table */
-        .table-wrap { width: 100%; overflow-x: auto; border-radius: 10px; border: 1px solid #eee; }
-        table { width: 100%; border-collapse: collapse; min-width: 650px; }
-        th { text-align: left; background: #f8f9fa; color: var(--primary); padding: 15px; border-bottom: 2px solid #eee; font-size: 13px; }
-        td { padding: 15px; border-bottom: 1px solid #eee; font-size: 0.9rem; }
-        
-        .status-pill { padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: bold; display: inline-block; }
-        .UPCOMING { background: #fff3cd; color: #856404; }
-        .PASSED { background: #d4edda; color: #155724; }
-        .FAILED { background: #f8d7da; color: var(--danger); }
-        .MALPRACTICE { background: #000; color: #fff; border: 1px solid var(--danger); }
-        
-        .action-link { background: var(--primary); color: white; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-size: 0.8rem; cursor: pointer; border: none; font-weight: 600; }
+        @keyframes gridMove {
+            0% { transform: rotate(-10deg) translateY(0); }
+            100% { transform: rotate(-10deg) translateY(-50px); }
+        }
 
-        .status-banner { padding: 15px; border-radius: 10px; font-weight: 600; margin-bottom: 20px; text-align: center; display: none; }
-        .approved { background: #d4edda; color: #155724; }
-        .rejected { background: #f8d7da; color: #721c24; }
-        .limit-alert { background: #fff3cd; color: #856404; padding: 12px; border-radius: 10px; border: 1px solid #ffeeba; display: none; margin-bottom: 15px; font-weight: 600; font-size: 0.85rem; }
+        .container {
+            position: relative;
+            z-index: 10;
+            background: var(--card-bg);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 3.5rem 2.5rem;
+            border-radius: 28px;
+            width: 90%;
+            max-width: 620px;
+            text-align: center;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+            animation: cardEntrance 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
 
-        .modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:9999; align-items:center; justify-content:center; }
-        .modal-content { background:white; width:90%; max-width:500px; padding:30px; border-radius:15px; position:relative; }
-        .close { position:absolute; top:15px; right:20px; font-size:24px; cursor:pointer; }
+        @keyframes cardEntrance {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
 
-        footer { background: var(--secondary); color: rgba(255,255,255,0.6); text-align: center; padding: 20px; font-size: 0.85rem; margin-top: auto; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        /* Server Audit Core Animation */
+        .tech-box {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 2rem auto;
+        }
+
+        .scanning-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, transparent, var(--primary-cyan), transparent);
+            top: 0;
+            animation: scan 2.5s ease-in-out infinite;
+            z-index: 5;
+        }
+
+        .gear-outer {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            border: 3px dashed rgba(6, 182, 212, 0.3);
+            border-radius: 50%;
+            animation: spin 20s linear infinite;
+        }
+
+        .gear-inner {
+            position: absolute;
+            width: 76%;
+            height: 76%;
+            top: 12%;
+            left: 12%;
+            border: 3px solid transparent;
+            border-left-color: var(--accent-orange);
+            border-right-color: var(--accent-orange);
+            border-radius: 50%;
+            animation: spinReverse 6s linear infinite;
+        }
+
+        .pulse-core {
+            position: absolute;
+            width: 44%;
+            height: 44%;
+            top: 28%;
+            left: 28%;
+            background: rgba(6, 182, 212, 0.1);
+            border: 2px solid var(--primary-cyan);
+            border-radius: 35% 65% 65% 35% / 40% 40% 60% 60%; /* Organic floating fluid dynamic shape */
+            animation: fluidMelt 4s ease-in-out infinite, spin 10s linear infinite;
+        }
+
+        @keyframes scan {
+            0%, 100% { top: 10%; opacity: 0; }
+            30%, 70% { opacity: 1; }
+            50% { top: 90%; opacity: 1; }
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+        @keyframes spinReverse { 100% { transform: rotate(-360deg); } }
+        @keyframes fluidMelt {
+            0%, 100% { border-radius: 35% 65% 65% 35% / 40% 40% 60% 60%; }
+            50% { border-radius: 60% 40% 30% 70% / 55% 65% 35% 45%; }
+        }
+
+        /* Content Styling */
+        h1 {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 1.2rem;
+            color: #ffffff;
+        }
+
+        p {
+            font-size: 1.05rem;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 2.5rem;
+        }
+
+        .highlight-blue {
+            color: var(--primary-cyan);
+            font-weight: 600;
+        }
+
+        .highlight-orange {
+            color: var(--accent-orange);
+            font-weight: 600;
+        }
+
+        /* Live Progress Bar Animation */
+        .progress-wrapper {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1.2rem;
+            border-radius: 16px;
+            text-align: left;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 0.6rem;
+            font-weight: 500;
+        }
+
+        .progress-bar-container {
+            width: 100%;
+            height: 6px;
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .progress-bar-fill {
+            height: 100%;
+            width: 75%; /* Manually control progress percentage here */
+            background: linear-gradient(90deg, var(--primary-cyan), var(--accent-orange));
+            border-radius: 100px;
+            position: relative;
+            animation: fillGlow 2s ease-in-out infinite;
+        }
+
+        /* Shimmer effect on loading bar */
+        .progress-bar-fill::after {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(
+                90deg,
+                transparent,
+                rgba(255, 255, 255, 0.4),
+                transparent
+            );
+            animation: shimmer 1.5s infinite;
+        }
+
+        @keyframes shimmer {
+            0% { transform: translateX(-100%); }
+            100% { transform: translateX(100%); }
+        }
     </style>
 </head>
 <body>
 
-<div id="loader"><div class="spinner"></div><p style="margin-top:15px; color:var(--primary); font-weight:600;">Authenticating...</p></div>
-
-<div id="loginPage" class="login-screen">
-    <div class="login-container">
-        <div class="login-visual"><img src="https://img.freepik.com/free-vector/digital-learning-abstract-concept-vector-illustration_335657-2410.jpg" alt="LMS"></div>
-        <div class="login-form">
-            <h2 style="color:var(--primary); margin-bottom: 5px;">Pharma2Tech Systems</h2>
-            <p style="margin-bottom: 25px; color: #666;">Student Dashboard Access</p>
-            <input type="email" id="email" placeholder="Student Email ID">
-            <input type="password" id="pass" placeholder="Secure Password">
-            <button class="btn-login" onclick="handleLogin()">Login to LMS</button>
+    <div class="container">
+        <div class="tech-box">
+            <div class="scanning-line"></div>
+            <div class="gear-outer"></div>
+            <div class="gear-inner"></div>
+            <div class="pulse-core"></div>
         </div>
-    </div>
-</div>
 
-<div id="dashboard">
-    <header>
-        <div style="font-weight: 600; font-size: 1.1rem;"><i class="fas fa-microscope"></i> Pharma2Tech LMS</div>
-        <div style="display: flex; align-items: center; gap: 15px;">
-            <span id="studentNameDisplay" style="background: rgba(255,255,255,0.15); padding: 5px 15px; border-radius: 20px; font-size: 0.85rem;">Student</span>
-            <button onclick="location.reload()" style="background:var(--danger); color:white; border:none; padding:6px 12px; border-radius:8px; cursor:pointer; font-weight: 600; font-size: 0.8rem;">Logout</button>
-        </div>
-    </header>
-
-    <div class="nav-tabs">
-        <div class="nav-item active" onclick="showTab('attendance', this)">Attendance</div>
-        <div class="nav-item" onclick="showTab('exams', this)">Exams</div>
-        <div class="nav-item" onclick="showTab('applyInterview', this)">Apply Interview</div>
-        <div class="nav-item" onclick="showTab('interviews', this)">Interviews</div>
-        <div class="nav-item" onclick="showTab('assign', this)">Assignments</div>
-        <div class="nav-item" onclick="showTab('cert', this)">Certification</div>
-        <div class="nav-item" onclick="showTab('support', this)">Support Desk</div>
-    </div>
-
-    <div class="main-content">
-        <div id="applyInterview" class="section">
-            <h3>Apply for Interview</h3>
-            <div style="background: #f9f9f9; padding: 25px; border-radius: 15px; border: 1px solid #e0e0e0; text-align: center;">
-                <h4 style="margin-top:0;">Ready to start your career?</h4>
-                <p style="color:#666; margin-bottom: 20px;">Click the button below to fill out your interview application form.</p>
-                <a href="https://pharma2techsolutions-jpg.github.io/interview-aplication-system/" target="_blank" class="btn-login" style="width: auto; padding: 12px 30px; display: inline-block;">Fill Interview Form</a>
+        <h1>Sorry For The Inconvenience</h1>
+        <p>Dear Students, we have received your recent queries and feedback. To provide you with an absolutely glitch-free experience, our <span class="highlight-blue">LMS Portal Is Under Sudden Technical Audit</span>. We are currently resolving all stability issues. <span class="highlight-orange">Please wait for some time.</span></p>
+        
+        <div class="progress-wrapper">
+            <div class="progress-info">
+                <span>Debugging & Optimizing Servers</span>
+                <span class="highlight-cyan">In Progress...</span>
             </div>
-        </div>
-
-        <div id="attendance" class="section active">
-            <h3>Attendance & Resources</h3>
-            <div class="table-wrap">
-                <table><thead><tr><th>Date</th><th>Status</th><th>Topic Covered</th><th>Resource</th></tr></thead><tbody id="attBody"></tbody></table>
-            </div>
-        </div>
-
-        <div id="exams" class="section">
-            <h3>Examination Hub</h3>
-            <div class="table-wrap">
-                <table><thead><tr><th>Subject</th><th>Score</th><th>Date</th><th>Status</th><th>Action</th></tr></thead><tbody id="examBody"></tbody></table>
-            </div>
-        </div>
-
-        <div id="interviews" class="section">
-            <h3>Mock Interview Feedback</h3>
-            <div class="table-wrap">
-                <table><thead><tr><th>Date</th><th>Session</th><th>Comm.</th><th>Exp.</th><th>Conf.</th><th>Total</th><th>Action</th></tr></thead><tbody id="interviewBody"></tbody></table>
-            </div>
-        </div>
-
-        <div id="assign" class="section">
-            <h3>Course Assignments</h3>
-            <div class="table-wrap">
-                <table><thead><tr><th>Task Title</th><th>Due Date</th><th>Submission Status</th></tr></thead><tbody id="assignBody"></tbody></table>
-            </div>
-        </div>
-
-        <div id="cert" class="section" style="text-align:center; padding: 50px 20px;">
-            <i class="fas fa-award" style="font-size: 4rem; color: var(--warning); margin-bottom: 20px;"></i>
-            <h2 style="color: var(--primary);">Course Certification</h2>
-            <p style="color:#666; max-width: 500px; margin: 0 auto 25px;">Verified certificates are generated after the final assessment.</p>
-            <a href="https://pharma2techsolutions-jpg.github.io/Certification.Pharma2Tech/" target="_blank" class="btn-login" style="padding: 12px 35px; border-radius: 50px; width: auto;">Certificate Verification Portal</a>
-        </div>
-
-        <div id="support" class="section">
-            <h3>Support & Leave Center</h3>
-            <div id="statusBanner" class="status-banner"></div>
-            <div id="limitAlert" class="limit-alert">⚠️ Leave limit reached (Max 2/Month).</div>
-            <select id="reqType">
-                <option value="Leave Application">Leave Application</option>
-                <option value="Technical Issue">Technical Issue</option>
-                <option value="General Query">General Query</option>
-            </select>
-            <textarea id="reqMsg" rows="3" placeholder="Provide details..."></textarea>
-            <button id="submitBtn" class="btn-login" onclick="submitSupport()">Submit Request</button>
-            <h4 style="margin-top: 35px;">Recent History</h4>
-            <div class="table-wrap">
-                <table><thead><tr><th>Date</th><th>Category</th><th>Status</th></tr></thead><tbody id="supportBody"></tbody></table>
+            <div class="progress-bar-container">
+                <div class="progress-bar-fill"></div>
             </div>
         </div>
     </div>
-    <footer>&copy; 2026 <b>Pharma2Tech Systems Pvt Ltd.</b></footer>
-</div>
 
-<div id="remarkModal" class="modal">
-    <div class="modal-content">
-        <span class="close" onclick="closeModal()">&times;</span>
-        <h3 id="mTitle">Feedback Details</h3>
-        <div id="mRemark" style="background:#f9f9f9; padding:20px; border-radius:10px; color: #444; border-left: 4px solid var(--primary);"></div>
-        <p id="mDate" style="font-size:11px; color:#888; margin-top:15px; font-weight: 600;"></p>
-    </div>
-</div>
-
-<script>
-    const apiURL = "https://script.google.com/macros/s/AKfycbzJS7GFfAhezm4yDH5oLW4CNCoAs6CwUEHc_1FmZd8mY2o3RWMD1MoEl0-RRQkVQO0i/exec"; 
-    let userEmail = "";
-
-    function formatDate(val) {
-        if (!val) return "--";
-        if (typeof val === 'string' && val.includes('/')) return val; 
-        let d = new Date(val);
-        return isNaN(d) ? val : d.toLocaleDateString('en-GB');
-    }
-
-    async function handleLogin() {
-        const e = document.getElementById('email').value.trim();
-        const p = document.getElementById('pass').value.trim();
-        if(!e || !p) return alert("Please enter credentials.");
-        toggleLoader(true);
-        try {
-            const res = await fetch(`${apiURL}?action=login&email=${encodeURIComponent(e)}&pass=${encodeURIComponent(p)}`);
-            const d = await res.json();
-            if(d.status === "SUCCESS") {
-                userEmail = d.email;
-                document.getElementById('studentNameDisplay').innerText = "Welcome, " + d.name;
-                document.getElementById('loginPage').style.display = "none";
-                document.getElementById('dashboard').style.display = "flex";
-                document.body.style.background = "#f4f7f6";
-                loadData();
-            } else { alert("Invalid Credentials."); }
-        } catch(err) { alert("Server Error."); }
-        toggleLoader(false);
-    }
-
-    async function loadData() {
-        const res = await fetch(`${apiURL}?action=getDashboardData&email=${userEmail}`);
-        const data = await res.json();
-
-        // 1. Attendance
-        document.getElementById('attBody').innerHTML = data.attendance.slice(1).map(r => `<tr><td>${formatDate(r[1])}</td><td><b style="color:${r[2]=='Absent'?'var(--danger)':'var(--success)'}">${r[2]}</b></td><td>${r[3]}</td><td>${r[2]=='Absent'?`<a href="${r[4]}" target="_blank" class="action-link">Watch Video</a>`:'<i class="fas fa-check-circle" style="color:var(--success)"></i> Verified'}</td></tr>`).join('');
-
-        // 2. Exams
-        document.getElementById('examBody').innerHTML = data.exams.slice(1).map(r => {
-            const st = (r[6] || "").toUpperCase();
-            return `<tr><td>${r[2]}</td><td>${st=='UPCOMING'?'--':r[3]+'/'+r[4]}</td><td>${formatDate(r[5])}</td><td><span class="status-pill ${st}">${st}</span></td><td>${st=='UPCOMING'?`<a href="${r[7]}" target="_blank" class="action-link" style="background:var(--success)">Start</a>`:'--'}</td></tr>`;
-        }).join('');
-
-        // 3. Interviews
-        document.getElementById('interviewBody').innerHTML = data.interviews.slice(1).map(r => `<tr><td>${formatDate(r[7])}</td><td><b>${r[1]}</b></td><td>${r[2]}/10</td><td>${r[3]}/10</td><td>${r[4]}/10</td><td>${r[5]}/30</td><td><button class="action-link" onclick="openRemark('${r[1]}','${r[6]}','${formatDate(r[7])}')">Feedback</button></td></tr>`).join('');
-
-        // 4. Assignments
-        if(data.assignments && data.assignments.length > 1) {
-            document.getElementById('assignBody').innerHTML = data.assignments.slice(1).map(r => `<tr><td>${r[1]}</td><td>${formatDate(r[2])}</td><td><b style="color:${r[3]=='Submitted'?'green':'orange'}">${r[3]}</b></td></tr>`).join('');
-        }
-
-        // 5. Support
-        let leaveCount = 0;
-        const currentMonth = new Date().getMonth();
-        document.getElementById('supportBody').innerHTML = data.support.slice(1).reverse().map((r, i) => {
-            const dateObj = new Date(r[3]);
-            if(r[1] === "Leave Application" && dateObj.getMonth() === currentMonth) leaveCount++;
-            return `<tr><td>${formatDate(r[3])}</td><td>${r[1]}</td><td style="font-weight:bold; color:${r[4]=='Approved'?'green':(r[4]=='Rejected'?'red':'orange')}">${r[4]}</td></tr>`;
-        }).join('');
-
-        if(leaveCount >= 2) {
-            document.getElementById('limitAlert').style.display = "block";
-            document.getElementById('reqType').value = "Technical Issue";
-            Array.from(document.getElementById('reqType').options).forEach(opt => { if(opt.value === "Leave Application") opt.disabled = true; });
-        }
-    }
-
-    async function submitSupport() {
-        const type = document.getElementById('reqType').value;
-        const msg = document.getElementById('reqMsg').value.trim();
-        if(!msg) return alert("Details empty.");
-        toggleLoader(true);
-        try {
-            await fetch(`${apiURL}?action=support&email=${userEmail}&type=${type}&message=${encodeURIComponent(msg)}`, { method: 'POST' });
-            alert("Submitted!");
-            document.getElementById('reqMsg').value = "";
-            loadData();
-        } catch(e) { alert("Error."); }
-        toggleLoader(false);
-    }
-
-    function openRemark(t, r, d) { document.getElementById('mTitle').innerText = t; document.getElementById('mRemark').innerText = r; document.getElementById('mDate').innerText = "Date: " + d; document.getElementById('remarkModal').style.display = "flex"; }
-    function closeModal() { document.getElementById('remarkModal').style.display = "none"; }
-    function showTab(id, el) { document.querySelectorAll('.section').forEach(s => s.classList.remove('active')); document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active')); document.getElementById(id).classList.add('active'); el.classList.add('active'); }
-    function toggleLoader(show) { document.getElementById('loader').style.display = show ? "flex" : "none"; }
-</script>
 </body>
 </html>
